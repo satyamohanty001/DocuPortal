@@ -9,7 +9,19 @@ A comprehensive, industry-standard document analysis and RAG (Retrieval-Augmente
 
 > **🎯 100% FREE Operation** - Uses only free LLM APIs (Groq, Google Gemini) with zero cost token tracking
 
-![Document Portal Banner](docs/images/banner.png)
+## 📸 Application Screenshots
+
+### Document Analysis Interface
+![Document Analysis](docs/images/analysis.jpg)
+*Document analysis interface showing comprehensive evaluation metrics*
+
+### Analysis Results with Token Tracking
+![Analysis Results](docs/images/analysis-results.png)
+*Detailed analysis results with evaluation scores and token usage tracking*
+
+### Token Usage Analytics
+![Token Analytics](docs/images/analysis_token.png)
+*Real-time token usage and cost tracking dashboard*
 
 ## 🚀 Features
 
