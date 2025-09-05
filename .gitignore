@@ -1,43 +1,268 @@
-# Python cache & virtualenv
+# Enhanced Document Portal - Git Ignore Configuration
+
+# =============================================================================
+# SENSITIVE FILES (Never commit these!)
+# =============================================================================
+.env
+.env.local
+.env.production
+*.key
+*.pem
+secrets/
+credentials/
+
+# =============================================================================
+# PYTHON FILES
+# =============================================================================
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
-*.pyd
-*.pyo
-env/
-venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
+.installed.cfg
 *.egg
-*.log
+MANIFEST
 
-# OS & editor files
-.DS_Store
-.vscode/
-.idea/
+# =============================================================================
+# TESTING & COVERAGE
+# =============================================================================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+test-results/
+test_*.db
 
-# LangChain-related
+# =============================================================================
+# DATA & STORAGE (Project-specific)
+# =============================================================================
+# Uploaded documents
+data/
+uploads/
+temp/
+
+# Vector databases
 faiss_index/
 *.faiss
 *.pkl
 
-# Data & archive
-data/
-archive/
-main_archive/
-*.pdf
-
-# Secrets & configs
-.env
-.env.*
+# Cache directories
+cache/
+.cache/
+redis-data/
 
 # Logs
 logs/
 *.log
+*.log.*
 
-# Build/Dist
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+conda-meta/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# =============================================================================
+# PACKAGE MANAGERS
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# =============================================================================
+# DEPLOYMENT & CI/CD
+# =============================================================================
+.docker/
+docker-compose.override.yml
+.github/workflows/secrets.yml
+deployment-secrets/
+
+# =============================================================================
+# MONITORING & ANALYTICS
+# =============================================================================
+# Token usage logs
+token_usage.jsonl
+usage_stats.json
+analytics/
+
+# Performance logs
+performance.log
+profiling/
+
+# =============================================================================
+# TEMPORARY FILES
+# =============================================================================
+*.tmp
+*.temp
+.temporary/
+scratch/
+debug/
+
+# =============================================================================
+# BACKUP FILES
+# =============================================================================
+*.bak
+*.backup
+*.old
+backups/
+
+# =============================================================================
+# KEEP THESE FILES (Explicitly tracked)
+# =============================================================================
+# Configuration templates
+!env.example
+!config/config.yaml
+!docker-compose.yml.example
+
+# Documentation
+!docs/
+!README.md
+!INSTALLATION.md
+!DEPLOYMENT.md
+
+# Tests (but not test data)
+!tests/
+tests/data/
+tests/temp/
+
+# Static assets (but not uploads)
+!static/
+static/uploads/
+
+# =============================================================================
+# MOBILE & WEB
+# =============================================================================
+.expo/
+.next/
+out/
+.nuxt/
 dist/
-build/
-document_portal.egg-info/
+.tmp/
 
+# =============================================================================
+# SEARCH & INDEX FILES
+# =============================================================================
+.elasticsearch/
+.solr/
+search_index/
 
-incline_policy.json
+# =============================================================================
+# MEDIA FILES (Large files)
+# =============================================================================
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.mp3
+*.wav
+*.flac
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# But keep small demo files
+!docs/images/
+!static/demo/
+!examples/sample.*
+
+# =============================================================================
+# AI/ML SPECIFIC
+# =============================================================================
+# Model files (too large for git)
+*.model
+*.bin
+*.h5
+*.onnx
+*.pt
+*.pth
+checkpoints/
+models/downloaded/
+
+# Training data
+training_data/
+datasets/
+embeddings/
+
+# =============================================================================
+# ANALYTICS & METRICS
+# =============================================================================
+wandb/
+mlruns/
+tensorboard/
+.neptune/
+
+# =============================================================================
+# SYSTEM FILES
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# PROJECT SPECIFIC IGNORES
+# =============================================================================
+# Document Portal specific
+session_*/
+chat_history/
+analysis_results/
+comparison_cache/
+evaluation_reports/
+
+# Development artifacts
+debug_output/
+test_uploads/
+benchmark_results/

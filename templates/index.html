@@ -20,6 +20,7 @@
       <button class="tab-btn active" data-tab="analysis">Document Analysis</button>
       <button class="tab-btn" data-tab="compare">Document Compare</button>
       <button class="tab-btn" data-tab="chat">Doc Chat</button>
+      <button class="tab-btn" data-tab="analytics">📊 Analytics</button>
     </nav>
   </header>
 
@@ -28,20 +29,63 @@
     <section id="tab-analysis" class="tab-panel active">
       <div class="card">
         <h2>🔎 Analyze a Document</h2>
-        <p class="muted">Upload a PDF and get structured analysis.</p>
+        <p class="muted">Upload documents in multiple formats (.pdf, .docx, .pptx, .xlsx, .csv, .md, .txt) and get AI-powered analysis with caching and cost tracking.</p>
         <form id="form-analyze" class="form-grid" onsubmit="return false;">
           <div class="field">
-            <label for="an-file">Upload PDF</label>
-            <input id="an-file" type="file" accept=".pdf" required />
-            <small class="help">Only .pdf files</small>
+            <label for="an-file">Upload Document</label>
+            <input id="an-file" type="file" accept=".pdf,.docx,.pptx,.xlsx,.csv,.md,.txt" required />
+            <small class="help">Supports: PDF, DOCX, PPTX, XLSX, CSV, Markdown, TXT</small>
           </div>
           <div class="actions">
             <button id="btn-analyze" class="btn primary">Run Analysis</button>
           </div>
         </form>
         <div id="an-result" class="result-block">
-          <h3>Result</h3>
-          <pre class="code" id="an-json">Waiting for analysis…</pre>
+          <h3>Analysis Result</h3>
+          <div class="analysis-tabs">
+            <button class="analysis-tab-btn active" data-target="an-json">📄 Document Data</button>
+            <button class="analysis-tab-btn" data-target="an-metrics">📊 Evaluation Metrics</button>
+            <button class="analysis-tab-btn" data-target="an-tokens">💰 Token Usage</button>
+          </div>
+          <div id="an-json" class="analysis-content active">
+            <pre class="code">Waiting for analysis…</pre>
+          </div>
+          <div id="an-metrics" class="analysis-content">
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-label">Faithfulness</div>
+                <div class="metric-value" id="faithfulness-score">-</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Answer Relevancy</div>
+                <div class="metric-value" id="relevancy-score">-</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Context Precision</div>
+                <div class="metric-value" id="precision-score">-</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Context Recall</div>
+                <div class="metric-value" id="recall-score">-</div>
+              </div>
+            </div>
+          </div>
+          <div id="an-tokens" class="analysis-content">
+            <div class="token-stats">
+              <div class="token-item">
+                <span class="token-label">Tokens Used:</span>
+                <span class="token-value" id="tokens-used">-</span>
+              </div>
+              <div class="token-item">
+                <span class="token-label">Estimated Cost:</span>
+                <span class="token-value" id="estimated-cost">-</span>
+              </div>
+              <div class="token-item">
+                <span class="token-label">Model:</span>
+                <span class="token-value" id="model-used">-</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -85,12 +129,12 @@
     <section id="tab-chat" class="tab-panel">
       <div class="card">
         <h2>💬 Chat with your Documents</h2>
-        <p class="muted">Upload PDF/DOCX/TXT; we’ll index to FAISS and enable RAG chat.</p>
+        <p class="muted">Upload multiple document formats with enhanced memory management, caching, and conversation tracking.</p>
 
         <form id="form-chat-index" class="form-grid" onsubmit="return false;">
           <div class="field">
             <label for="chat-files">Upload files</label>
-            <input id="chat-files" type="file" multiple accept=".pdf,.docx,.txt" />
+            <input id="chat-files" type="file" multiple accept=".pdf,.docx,.pptx,.xlsx,.csv,.md,.txt" />
             <small class="help">You can select multiple files.</small>
           </div>
 
@@ -143,8 +187,136 @@
         <div id="chat-meta" class="muted small"></div>
 
         <div id="chat-ans" class="result-block">
-          <h3>Answer</h3>
-          <div class="answer" id="chat-answer">No answer yet.</div>
+          <h3>Chat Response</h3>
+          <div class="chat-tabs">
+            <button class="chat-tab-btn active" data-target="chat-answer">💬 Answer</button>
+            <button class="chat-tab-btn" data-target="chat-sources">📚 Sources</button>
+            <button class="chat-tab-btn" data-target="chat-eval">📊 Quality Score</button>
+          </div>
+          <div id="chat-answer" class="chat-content active">No answer yet.</div>
+          <div id="chat-sources" class="chat-content">
+            <div class="sources-list">No sources available.</div>
+          </div>
+          <div id="chat-eval" class="chat-content">
+            <div class="eval-scores">
+              <div class="eval-item">
+                <span class="eval-label">Response Quality:</span>
+                <span class="eval-score" id="response-quality">-</span>
+              </div>
+              <div class="eval-item">
+                <span class="eval-label">Source Relevance:</span>
+                <span class="eval-score" id="source-relevance">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== ANALYTICS ============== -->
+    <section id="tab-analytics" class="tab-panel">
+      <div class="analytics-grid">
+        <!-- Cache Statistics -->
+        <div class="card analytics-card">
+          <h3>🚀 Cache Performance</h3>
+          <div class="cache-stats">
+            <div class="cache-type">
+              <h4>Memory Cache</h4>
+              <div class="stat-row">
+                <span>Hits:</span> <span id="memory-hits">-</span>
+              </div>
+              <div class="stat-row">
+                <span>Misses:</span> <span id="memory-misses">-</span>
+              </div>
+              <div class="stat-row">
+                <span>Hit Rate:</span> <span id="memory-rate">-</span>
+              </div>
+            </div>
+            <div class="cache-type">
+              <h4>Redis Cache</h4>
+              <div class="stat-row">
+                <span>Hits:</span> <span id="redis-hits">-</span>
+              </div>
+              <div class="stat-row">
+                <span>Misses:</span> <span id="redis-misses">-</span>
+              </div>
+              <div class="stat-row">
+                <span>Hit Rate:</span> <span id="redis-rate">-</span>
+              </div>
+            </div>
+          </div>
+          <button id="refresh-cache" class="btn secondary">Refresh Stats</button>
+        </div>
+
+        <!-- Token Usage -->
+        <div class="card analytics-card">
+          <h3>💰 Token Usage & Costs</h3>
+          <div class="usage-stats">
+            <div class="usage-item">
+              <div class="usage-label">Total Tokens</div>
+              <div class="usage-value" id="total-tokens">-</div>
+            </div>
+            <div class="usage-item">
+              <div class="usage-label">Total Cost</div>
+              <div class="usage-value" id="total-cost">-</div>
+            </div>
+            <div class="usage-item">
+              <div class="usage-label">Requests</div>
+              <div class="usage-value" id="total-requests">-</div>
+            </div>
+            <div class="usage-item">
+              <div class="usage-label">Avg Cost/Request</div>
+              <div class="usage-value" id="avg-cost">-</div>
+            </div>
+          </div>
+          <button id="refresh-tokens" class="btn secondary">Refresh Usage</button>
+        </div>
+
+        <!-- System Health -->
+        <div class="card analytics-card">
+          <h3>🏥 System Health</h3>
+          <div class="health-stats">
+            <div class="health-item">
+              <span class="health-label">API Status:</span>
+              <span class="health-status" id="api-status">-</span>
+            </div>
+            <div class="health-item">
+              <span class="health-label">Cache Status:</span>
+              <span class="health-status" id="cache-status">-</span>
+            </div>
+            <div class="health-item">
+              <span class="health-label">Memory Usage:</span>
+              <span class="health-status" id="memory-usage">-</span>
+            </div>
+            <div class="health-item">
+              <span class="health-label">Active Sessions:</span>
+              <span class="health-status" id="active-sessions">-</span>
+            </div>
+          </div>
+          <button id="refresh-health" class="btn secondary">Check Health</button>
+        </div>
+
+        <!-- Document Statistics -->
+        <div class="card analytics-card">
+          <h3>📊 Document Statistics</h3>
+          <div class="doc-stats">
+            <div class="doc-type">
+              <span class="doc-label">PDF Documents:</span>
+              <span class="doc-count" id="pdf-count">-</span>
+            </div>
+            <div class="doc-type">
+              <span class="doc-label">DOCX Documents:</span>
+              <span class="doc-count" id="docx-count">-</span>
+            </div>
+            <div class="doc-type">
+              <span class="doc-label">Excel Files:</span>
+              <span class="doc-count" id="xlsx-count">-</span>
+            </div>
+            <div class="doc-type">
+              <span class="doc-label">Other Formats:</span>
+              <span class="doc-count" id="other-count">-</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -171,24 +343,76 @@
     });
   });
 
+  // Enhanced tab switching for analysis results
+  document.querySelectorAll(".analysis-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".analysis-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".analysis-content").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
+    });
+  });
+
+  // Enhanced tab switching for chat results
+  document.querySelectorAll(".chat-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".chat-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".chat-content").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
+    });
+  });
+
   // ===== ANALYZE =====
   document.getElementById("btn-analyze").addEventListener("click", async () => {
     const file = document.getElementById("an-file").files[0];
-    const out  = document.getElementById("an-json");
-    if (!file) { out.textContent = "Please upload a PDF."; return; }
+    const out  = document.getElementById("an-json").querySelector("pre");
+    if (!file) { out.textContent = "Please upload a document."; return; }
 
     try {
-      out.textContent = "Running analysis…";
+      out.textContent = "Running enhanced analysis…";
       const fd = new FormData();
-      fd.append("file", file); // <-- must be 'file' to match FastAPI
+      fd.append("file", file);
+      fd.append("extract_tables", "true");
+      fd.append("extract_images", "true");
+      fd.append("perform_ocr", "true");
+      fd.append("language", "en");
 
-      const res = await fetch(`${API_BASE}/analyze`, { method: "POST", body: fd });
+      const res = await fetch(`${API_BASE}/analyze/enhanced`, { method: "POST", body: fd });
       if (!res.ok) {
         const err = await res.json().catch(()=>({detail:res.statusText}));
         throw new Error(err.detail || `HTTP ${res.status}`);
       }
       const json = await res.json();
-      out.textContent = JSON.stringify(json, null, 2);
+      
+      // Handle enhanced API response format
+      const responseData = json.data || json;
+      
+      // Update document data tab
+      out.textContent = JSON.stringify(responseData, null, 2);
+      
+      // Update evaluation metrics if available
+      if (responseData.evaluation_metrics) {
+        const metrics = responseData.evaluation_metrics;
+        document.getElementById("faithfulness-score").textContent = 
+          metrics.faithfulness ? metrics.faithfulness.toFixed(3) : "N/A";
+        document.getElementById("relevancy-score").textContent = 
+          metrics.answer_relevancy ? metrics.answer_relevancy.toFixed(3) : "N/A";
+        document.getElementById("precision-score").textContent = 
+          metrics.context_precision ? metrics.context_precision.toFixed(3) : "N/A";
+        document.getElementById("recall-score").textContent = 
+          metrics.context_recall ? metrics.context_recall.toFixed(3) : "N/A";
+      }
+      
+      // Update token usage if available
+      if (responseData.token_usage) {
+        const tokens = responseData.token_usage;
+        document.getElementById("tokens-used").textContent = tokens.total_tokens || "N/A";
+        document.getElementById("estimated-cost").textContent = 
+          tokens.estimated_cost ? `$${tokens.estimated_cost.toFixed(4)}` : "N/A";
+        document.getElementById("model-used").textContent = tokens.model_name || tokens.model || "N/A";
+      }
+      
     } catch (e) {
       out.textContent = "Error: " + (e.message || e);
     }
@@ -297,12 +521,116 @@
         const err = await res.json().catch(()=>({detail:res.statusText}));
         throw new Error(err.detail || `HTTP ${res.status}`);
       }
-      const json = await res.json(); // { answer, ... }
+      const json = await res.json(); // { answer, sources, evaluation, ... }
+      
+      // Update answer
       ans.textContent = json.answer || "No answer.";
+      
+      // Update sources if available
+      if (json.sources) {
+        const sourcesList = document.querySelector(".sources-list");
+        if (json.sources.length > 0) {
+          sourcesList.innerHTML = json.sources.map((source, idx) => 
+            `<div class="source-item">
+              <strong>Source ${idx + 1}:</strong> ${source.content || source}
+            </div>`
+          ).join("");
+        } else {
+          sourcesList.textContent = "No sources found.";
+        }
+      }
+      
+      // Update evaluation scores if available
+      if (json.evaluation) {
+        const eval = json.evaluation;
+        document.getElementById("response-quality").textContent = 
+          eval.quality ? eval.quality.toFixed(3) : "N/A";
+        document.getElementById("source-relevance").textContent = 
+          eval.relevance ? eval.relevance.toFixed(3) : "N/A";
+      }
+      
     } catch (e) {
       ans.textContent = "Query failed: " + (e.message || e);
     }
   });
+
+  // ===== ANALYTICS =====
+  
+  // Refresh cache statistics
+  document.getElementById("refresh-cache").addEventListener("click", async () => {
+    try {
+      const res = await fetch(`${API_BASE}/analytics/cache-stats`);
+      if (res.ok) {
+        const stats = await res.json();
+        
+        // Memory cache stats
+        const memory = stats.memory_cache || {};
+        document.getElementById("memory-hits").textContent = memory.hits || 0;
+        document.getElementById("memory-misses").textContent = memory.misses || 0;
+        const memoryTotal = (memory.hits || 0) + (memory.misses || 0);
+        const memoryRate = memoryTotal > 0 ? ((memory.hits || 0) / memoryTotal * 100).toFixed(1) + "%" : "0%";
+        document.getElementById("memory-rate").textContent = memoryRate;
+        
+        // Redis cache stats
+        const redis = stats.redis_cache || {};
+        document.getElementById("redis-hits").textContent = redis.hits || 0;
+        document.getElementById("redis-misses").textContent = redis.misses || 0;
+        const redisTotal = (redis.hits || 0) + (redis.misses || 0);
+        const redisRate = redisTotal > 0 ? ((redis.hits || 0) / redisTotal * 100).toFixed(1) + "%" : "0%";
+        document.getElementById("redis-rate").textContent = redisRate;
+      }
+    } catch (e) {
+      console.error("Failed to refresh cache stats:", e);
+    }
+  });
+
+  // Refresh token usage
+  document.getElementById("refresh-tokens").addEventListener("click", async () => {
+    try {
+      const res = await fetch(`${API_BASE}/analytics/token-usage`);
+      if (res.ok) {
+        const usage = await res.json();
+        document.getElementById("total-tokens").textContent = usage.total_tokens || 0;
+        document.getElementById("total-cost").textContent = 
+          usage.total_cost ? `$${usage.total_cost.toFixed(4)}` : "$0.0000";
+        document.getElementById("total-requests").textContent = usage.requests_count || 0;
+        const avgCost = usage.requests_count > 0 ? 
+          (usage.total_cost / usage.requests_count).toFixed(4) : "0.0000";
+        document.getElementById("avg-cost").textContent = `$${avgCost}`;
+      }
+    } catch (e) {
+      console.error("Failed to refresh token usage:", e);
+    }
+  });
+
+  // Refresh system health
+  document.getElementById("refresh-health").addEventListener("click", async () => {
+    try {
+      const res = await fetch(`${API_BASE}/health/detailed`);
+      if (res.ok) {
+        const health = await res.json();
+        document.getElementById("api-status").textContent = health.status || "Unknown";
+        document.getElementById("cache-status").textContent = 
+          health.cache_status || "Unknown";
+        document.getElementById("memory-usage").textContent = 
+          health.memory_usage || "Unknown";
+        document.getElementById("active-sessions").textContent = 
+          health.active_sessions || 0;
+      }
+    } catch (e) {
+      console.error("Failed to refresh health stats:", e);
+    }
+  });
+
+  // Auto-refresh analytics when tab is opened
+  document.querySelector('[data-tab="analytics"]').addEventListener("click", () => {
+    setTimeout(() => {
+      document.getElementById("refresh-cache").click();
+      document.getElementById("refresh-tokens").click();
+      document.getElementById("refresh-health").click();
+    }, 100);
+  });
+
 </script>
 
 </body>
